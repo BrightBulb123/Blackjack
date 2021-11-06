@@ -35,7 +35,7 @@ class CardsDeck():
         random.shuffle(self.cards)
     
     @property
-    def card_short_names(self):
+    def card_short_names(self) -> list:
         return [card.short_name for card in self.cards]
 
 def main():
