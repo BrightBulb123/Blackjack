@@ -29,14 +29,26 @@ class CardsDeck():
         
         self.shuffle()
 
-
     def shuffle(self) -> None:
         """'shuffle()' is only here because it would look cleaner than 'random.shuffle()'"""
 
         random.shuffle(self.cards)
+    
+    @property
+    def card_short_names(self):
+        return [card.short_name for card in self.cards]
 
 def main():
-    pass
+    playing = True
+    while playing:
+        deck = CardsDeck()
+        print(*deck.card_short_names, sep='\n')
+        playing = input_getter("Would you like to play again?", ['yes', 'y'])
+
+
+def input_getter(s: str, options: list):
+    temp = input(s)
+    return temp.lower() in options
 
 
 if __name__ == "__main__":
