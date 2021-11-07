@@ -62,10 +62,10 @@ def main() -> None:
         deck.shuffle()
 
         dealerHand = [deck.cards.pop(0), deck.cards.pop(1)]
-        dealerHandValue = value_calculator(dealerHand[0])
+        dealerHandValue = dealerHand[0].int_value
 
         if turn:
-            player_turn(playerHand, playerHandValue)
+            player_turn(playerHand, playerHandValue, deck, turn)
         
         playing = input("\nWould you like to play again?\n").lower() in ['yes', 'y']
 
@@ -82,9 +82,32 @@ def game_intro():
     print('\n', "BLACKJACK".center(21, '='), '\n', sep='')
 
 
-def player_turn(p_hand: list, p_value: int) -> None:
-    print(f"Player's hand: {hand_printer(p_hand)}")
-    print(f"Player's hand's value: {p_value}")
+def player_turn(p_hand: list, p_value: int, d: CardsDeck, t: bool) -> None:
+    print(f"\nPlayer's hand: {hand_printer(p_hand)}")
+    print(f"Player's hand's value: {p_value}\n")
+
+    choice = ''
+
+    while choice != 'stand' and p_value < 21:
+        choice = input("Would you like to:\n1.) Hit\n2.) Stand\n3.) Exit\n\nYour input: ").lower()
+
+        if choice == 'hit':
+            p_hand.append(d.cards.pop(random.randint(0, len(d.cards)-1)))
+            print(f"\nPlayer's hand: {hand_printer(p_hand)}")
+            p_value = value_calculator(p_hand)
+            print(f"Player's hand's value: {p_value}\n")
+        elif choice == 'stand':
+            print(f"\nPlayer's hand: {hand_printer(p_hand)}")
+            p_value = value_calculator(p_hand)
+            print(f"Player's hand's value: {p_value}\n")
+            t = False
+        elif choice == 'exit':
+            exit()
+        else:
+            print("\nPlease enter 'hit', 'stand', or 'exit' (without the quotation marks)...\n")
+            continue
+    
+    return
 
 
 if __name__ == "__main__":
