@@ -3,6 +3,8 @@
 import random
 
 class Card():
+    """The blueprint for creating a card"""
+
     def __init__(self, value, suit) -> None:
         self.value = value
         self.int_value = self.int_value_assigner()
@@ -20,6 +22,8 @@ class Card():
 
 
 class CardsDeck():
+    """The blueprint for creating a deck of cards"""
+
     def __init__(self) -> None:
         self.cards = []
         self.generate()
@@ -46,12 +50,13 @@ class CardsDeck():
         return [card.short_name for card in self.cards]
 
 def main() -> None:
+    """For the purposes of __name__ == '__main__', this is the main function"""
+    
     playing = True
 
     game_intro()
 
-    turn = True
-    # turn = True is the same as turn = "Player"
+    turn = True  # 'turn = True' is the same as turn = "Player"
 
     while playing:
         deck = CardsDeck()
@@ -71,18 +76,26 @@ def main() -> None:
 
 
 def hand_printer(hand: list) -> str:
+    """Returns a string for the short names of the cards in a hand"""
+
     return ', '.join(str(card.short_name) for card in hand)
 
 
 def value_calculator(hand: list) -> int:
+    """Returns the sum of the values of the cards in a hand"""
+
     return sum(card.int_value for card in hand)
 
 
 def game_intro():
+    """Just prints the title of the game (BLACKJACK)"""
+
     print('\n', "BLACKJACK".center(21, '='), '\n', sep='')
 
 
 def player_turn(p_hand: list, p_value: int, d: CardsDeck, t: bool) -> None:
+    """Everything that happens in the player's turn"""
+
     print(f"\nPlayer's hand: {hand_printer(p_hand)}")
     print(f"Player's hand's value: {p_value}\n")
 
@@ -111,4 +124,6 @@ def player_turn(p_hand: list, p_value: int, d: CardsDeck, t: bool) -> None:
 
 
 if __name__ == "__main__":
+    """Indicates this file is meant to be run as the main file, not imported"""
+    
     main()
