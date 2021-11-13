@@ -1,6 +1,7 @@
-"""A simple game of Blackjack"""
+"""A game of Blackjack (Ace = 1)"""
 
 import random
+from typing import Tuple
 
 class Card():
     """The blueprint for creating a card"""
@@ -56,9 +57,9 @@ def main() -> None:
 
     game_intro()
 
-    turn = True  # 'turn = True' is the same as turn = "Player"
-
     while playing:
+        turn = True  # 'turn = True' is the same as turn = "Player"
+
         deck = CardsDeck()
 
         playerHand = [deck.cards.pop(0), deck.cards.pop(1)]
@@ -69,10 +70,17 @@ def main() -> None:
         dealerHand = [deck.cards.pop(0), deck.cards.pop(1)]
         dealerHandValue = dealerHand[0].int_value
 
-        if turn:
-            player_turn(playerHand, playerHandValue, deck, turn)
-        
+        while playerHandValue < 21 and dealerHandValue < 21:
+            if turn:
+                playerHand, playerHandValue, deck, turn = player_turn(playerHand, playerHandValue, deck, turn)
+            else:
+                dealerHand, dealerHandValue, deck, turn = dealer_turn(dealerHand, dealerHandValue, deck, turn, playerHandValue)
+
+        win_checker(playerHandValue, dealerHandValue)
+
         playing = input("\nWould you like to play again?\n").lower() in ['yes', 'y']
+
+
 
 
 def hand_printer(hand: list) -> str:
@@ -93,7 +101,7 @@ def game_intro():
     print('\n', "BLACKJACK".center(21, '='), '\n', sep='')
 
 
-def player_turn(p_hand: list, p_value: int, d: CardsDeck, t: bool) -> None:
+def player_turn(p_hand: list, p_value: int, d: CardsDeck, t: bool) -> Tuple:
     """Everything that happens in the player's turn"""
 
     print(f"\nPlayer's hand: {hand_printer(p_hand)}")
@@ -104,23 +112,51 @@ def player_turn(p_hand: list, p_value: int, d: CardsDeck, t: bool) -> None:
     while choice != 'stand' and p_value < 21:
         choice = input("Would you like to:\n1.) Hit\n2.) Stand\n3.) Exit\n\nYour input: ").lower()
 
+        d.shuffle()
+
         if choice == 'hit':
             p_hand.append(d.cards.pop(random.randint(0, len(d.cards)-1)))
-            print(f"\nPlayer's hand: {hand_printer(p_hand)}")
-            p_value = value_calculator(p_hand)
-            print(f"Player's hand's value: {p_value}\n")
         elif choice == 'stand':
-            print(f"\nPlayer's hand: {hand_printer(p_hand)}")
-            p_value = value_calculator(p_hand)
-            print(f"Player's hand's value: {p_value}\n")
             t = False
         elif choice == 'exit':
             exit()
         else:
             print("\nPlease enter 'hit', 'stand', or 'exit' (without the quotation marks)...\n")
             continue
+
+        print(f"\nPlayer's hand: {hand_printer(p_hand)}")
+        p_value = value_calculator(p_hand)
+        print(f"Player's hand's value: {p_value}\n")
+
+    t = False  # Switches the value of 't' to go to dealer's turn
+
+    return p_hand, p_value, d, t
+
+
+def dealer_turn(d_hand: list, d_value: int, d: CardsDeck, t: bool, p_value: int) -> Tuple:
+
+    d.shuffle()
     
-    return
+    while d_value < 21 and d_value < p_value:
+        d_hand.append(d.cards.pop(random.randint(0, len(d.cards)-1)))
+        
+        print(f"\nDealer's hand: {hand_printer(d_hand)}")
+        d_value = value_calculator(d_hand)
+        print(f"Dealer's hand's value: {d_value}\n")
+    
+    t = True
+
+    return d_hand, d_value, d, t
+
+
+def win_checker(playerHandValue: list, dealerHandValue: list) -> None:
+    playerWon = ((playerHandValue == 21 and playerHandValue > dealerHandValue) or dealerHandValue > 21)
+    dealerWon = (dealerHandValue == 21 and dealerHandValue > playerHandValue) or playerHandValue > 21
+
+    if playerWon:
+        print("\nCongratulations! You won!\n")
+    elif dealerWon:
+        print("\nGood luck next time...\n")
 
 
 if __name__ == "__main__":
